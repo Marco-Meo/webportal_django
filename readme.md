@@ -21,3 +21,68 @@ Ausführen im CMD:
 ### 4. Superuser erstellen
 
 `python manage.py createsuperuser`
+
+### 5. App erstellen
+
+`python manage.py startapp faq`
+
+### 6. App registrieren
+
+settings.py -> 
+```
+INSTALLED_APPS = [
+    ...
+    'faq',
+]
+```
+
+### 7. URL bekannt machen
+webportal/urls.py
+```
+urlpatterns = [
+    ...
+    path('faq/', include('faq.urls')),
+]
+```
+
+### 8. Neue Datei urls.py im App faq hinzufügen
+
+```
+from django.urls import path
+from . import views
+
+app_name = 'faq'
+
+urlpatterns = [
+    path('', views.index, name='index'),
+]
+```
+
+### 9. View erstellt
+View im app faq (views.py) erstellen
+
+```
+from django.http import HttpResponse
+
+
+def index(request):
+    return HttpResponse("FAQ")
+```
+
+### 10. Ordner für HTML Templates erstellen
+faq/Templates/faq
+
+### 11. HTML Template Datei erstellen
+Im oben erstellen Ordner die Datei index.html erstellen.
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ</title>
+</head>
+<body>
+    <h1>FAQ</h1>
+</body>
+</html>
+```
