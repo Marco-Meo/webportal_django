@@ -105,3 +105,13 @@ class Faq(models.Model):
         return self.title
 
 ```
+
+### 13. Model für Backend registrieren
+faq/admin.py
+
+```
+from django.contrib import admin
+from . import models
+
+admin.site.register(models.Faq)
+```
