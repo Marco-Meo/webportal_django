@@ -14,8 +14,12 @@
     <ul>
         {% for faq in faqs %}
         <li>
-            {{ faq.title }} (<a href="{% url 'faq:faq-detail' faq.id %}">Detail</a>
-             | <a href="{% url 'faq:faq-update' faq.id %}">Edit</a>)
+            {{ faq.title }} ( <a href="{% url 'faq:faq-detail' faq.id %}">Detail</a>
+            {% if user.is_authenticated %}
+             | <a href="{% url 'faq:faq-update' faq.id %}">Edit</a>
+             | <a href="{% url 'faq:faq-delete' faq.id %}">Löschen</a>
+            {% endif %}
+        )
         </li>
         {% endfor %}
     </ul>

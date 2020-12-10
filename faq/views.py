@@ -14,6 +14,7 @@ def faq_detail(request, pk):
     return render(request, 'faq/faq_detail.html', {'faq': faq})
 
 
+@login_required(login_url='/admin/login/')
 def faq_update(request, pk):
     faq = get_object_or_404(Faq, pk=pk)
     form = FaqForm(request.POST or None, instance=faq)
@@ -37,3 +38,11 @@ def faq_create(request):
             return redirect('faq:faq-list')
 
     return render(request, 'faq/faq_create.html', {'form': form})
+
+
+@login_required(login_url='/admin/login/')
+def faq_delete(request, pk):
+    if request.method == 'GET':
+        faq = get_object_or_404(Faq, pk=pk)
+        faq.delete()
+        return redirect('faq:faq-list')
