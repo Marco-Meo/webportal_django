@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>FAQ Eintrag</title>
-</head>
-<body>
-    <h2>{{ faq.title }}</h2>
-    <p>{{ faq.description }}</p>
-    </br>
-    Ersteller: {{ faq.creator }} @ {{ faq.creation_date | date:"d.M.Y h:m"}}
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}
+{{ faq.title }}
+{% endblock %}
+{% block content %}
+<p>{{ faq.description }}</p>
+</br>
+Ersteller: {{ faq.creator }} @ {{ faq.creation_date | date:"d.M.Y h:m"}}
+{% endblock %}
