@@ -22,3 +22,9 @@ def faq_update(request, pk):
             return redirect('faq:faq-list')
 
     return render(request, 'faq/faq_update.html', {'form': form})
+
+
+def faq_create(request):
+    form = FaqForm(request.POST or None)
+
+    return render(request, 'faq/faq_create.html', {'form': form})
