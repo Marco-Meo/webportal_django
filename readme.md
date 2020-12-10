@@ -1,4 +1,4 @@
-# Schulung Django Webframwork
+# Schulung Django Webframework
 ## Setup
 
 ### 1. Downlaod Git Repository
