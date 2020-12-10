@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 def faq_list(request):
     faqs = Faq.objects.all()
-    return render(request, 'faq/index.html', {'faqs': faqs})
+    return render(request, 'faq/faq_list.html', {'faqs': faqs})
 
 
 def faq_detail(request, pk):
