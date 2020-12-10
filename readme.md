@@ -115,3 +115,208 @@ from . import models
 
 admin.site.register(models.Faq)
 ```
+
+### 14. Anzeige der FAQ Liste, Update und Detail
+Neue Funktion faq_list erstellen
+
+faq/views.py
+```
+def faq_list(request):
+    faqs = Faq.objects.all()
+    return render(request, 'faq/index.html', {'faqs': faqs})
+
+def faq_detail(request, pk):
+    faq = get_object_or_404(Faq, pk=pk)
+    return render(request, 'faq/faq_detail.html', {'faq': faq})
+
+
+def faq_update(request, pk):
+    faq = get_object_or_404(Faq, pk=pk)
+    form = FaqForm(request.POST or None, instance=faq)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('faq:faq-list')
+
+    return render(request, 'faq/faq_update.html', {'form': form})
+
+```
+
+faq/urls.py erweitern
+```
+urlpatterns = [
+    path('', views.faq_list, name='faq-list'),
+    path('detail/<int:pk>', views.faq_detail, name='faq-detail'),
+    path('detail/<int:pk>/update', views.faq_update, name='faq-update'),
+]
+```
+
+Template faq/index.html anpassen
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ</title>
+</head>
+<body>
+    <h1>FAQ</h1>
+    <ul>
+        {% for faq in faqs %}
+        <li>
+            {{ faq.title }} (<a href="{% url 'faq:faq-detail' faq.id %}">Detail</a>
+             | <a href="{% url 'faq:faq-update' faq.id %}">Edit</a>)
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+```
+
+Template faq/faq_detail.html erstellen
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ Eintrag</title>
+</head>
+<body>
+    <h2>{{ faq.title }}</h2>
+    <p>{{ faq.description }}</p>
+    </br>
+    Ersteller: {{ faq.creator }} @ {{ faq.creation_date | date:"d.M.Y h:m"}}
+</body>
+</html>
+```
+
+Template faq/faq_update.html erstellen
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ editieren</title>
+</head>
+<body>
+    <h2>Editiere FAQ Eintrag</h2>
+
+    <div>
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Speichern">
+        </form>
+    </div>
+</body>
+</html>
+```
+
+### 15. Neuer FAQ Eintrag erstellen
+
+Neues html template erstellen faq/templates/faq_create.html
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ Eintrag erstellen</title>
+</head>
+<body>
+    <h2>FAQ Eintrag erstellen</h2>
+
+    <div>
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Speichern">
+        </form>
+    </div>
+</body>
+</html>
+```
+
+faq/views.py erweitern um Funktion
+
+```
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url='/admin/login/')
+def faq_create(request):
+    form = FaqForm(request.POST or None)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            faq_form = form.save(commit=False)
+            faq_form.creator = request.user
+            form.save()
+            return redirect('faq:faq-list')
+    return render(request, 'faq/faq_create.html', {'form': form})
+```
+
+urls.py erweitern
+
+```
+urlpatterns = [
+    ...
+    path('create/', views.faq_create, name='faq-create'),
+]
+```
+
+index.html erweitern
+
+```
+<div>
+    {% if user.is_authenticated %}
+        <a href="{% url 'faq:faq-create' %}">Neuer Eintrag erstellen</a>
+    {% endif %}
+</div>
+```
+
+### 16. FAQ Eintrag löschen
+Neue View erstellen faq/views.py
+
+```
+@login_required(login_url='/admin/login')
+def faq_delete(request, pk):
+    if request.method == 'GET':
+        faq = get_object_or_404(Faq, pk=pk)
+        faq.delete()
+    return redirect('faq:faq-list')
+```
+
+Neuer Eintrag in urls.py
+
+```
+urlpatterns = [
+    ...
+    path('detail/<int:pk>/delete', views.faq_delete, name='faq-delete'),
+]
+```
+
+Index.html erweitern
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ</title>
+</head>
+<body>
+    <h1>FAQ</h1>
+    <ul>
+        {% for faq in faqs %}
+        <li>
+            {{ faq.title }} (<a href="{% url 'faq:faq-detail' faq.id %}">Detail</a>
+             | <a href="{% url 'faq:faq-update' faq.id %}">Edit</a>
+            | <a href="{% url 'faq:faq-delete' faq.id %}">Löschen</a>)
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+```
