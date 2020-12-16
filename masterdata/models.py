@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinLengthValidator
+from django.urls import reverse
 
 class Utility(models.Model):
     company_name = models.CharField(max_length=200)
@@ -17,13 +18,16 @@ class Customer(models.Model):
     zip = models.CharField("PLZ", max_length=4)
     city = models.CharField("Ort", max_length=60)
 
-
     def __str__(self):
         return self.company_name
 
+    def get_absolute_url(self):
+        return reverse('masterdata:customer-detail', args=[str(self.id)])
+
+
 class Meteringpoint(models.Model):
     meteringcode = models.CharField("Messpunktnummer", max_length=33, validators=[MinLengthValidator(33),])
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='meteringpoint')
 
     def __str__(self):
         return self.meteringcode

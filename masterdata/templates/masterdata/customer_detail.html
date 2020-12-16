@@ -1,21 +1,49 @@
 {% extends 'base.html' %}
 {% block title %}
-Kunde {{ object }}
+Kunde {{ customer }}
 {% endblock %}
 
 {% block content %}
-<div class="row">
+    <div class="row mb-2">
+    <div class="col-12">
+        <a class="btn btn-danger" href="{% url 'masterdata:customer-delete' customer.id %}">Löschen</a>
+        <a class="btn btn-primary" href="{% url 'masterdata:customer-update' customer.id %}">Editieren</a>
+    </div>
+    </div>
+<div class="row mt-2">
     <div class="col-lg-6">
-        <table>
-            <tr>
-                <td>Firma: </td>
-                <td>{{ object.company_name }}</td>
-            </tr>
-            <tr>
-                <td>Adresse: </td>
-                <td>{{ object.street }} </br> {{ object.zip }} {{ object.city }}</td>
-            </tr>
-        </table>
+        <div class="card">
+            <div class="card-header">
+                {{ customer.company_name }}
+            </div>
+            <div class="card-body">
+                Adresse:
+                <table class="table">
+                    <tr>
+                        <td>Strasse: </td>
+                        <td>{{ customer.street }}</td>
+                    </tr>
+                    <tr>
+                        <td>Ort: </td>
+                        <td>{{ customer.zip }} {{ customer.city }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                Messpunkte
+            </div>
+            <div class="card-body">
+                <ul>
+                    {% for object in object_list %}
+                        <li>{{ object }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
     <div class="col-lg-6"></div>
 </div>
