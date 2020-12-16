@@ -7,5 +7,5 @@ from .serializers import FaqSerializer
 
 class FaqViewSet(viewsets.ModelViewSet):
     serializer_class = FaqSerializer
-    queryset = Faq.objects.all()
+    queryset = Faq.objects.all().order_by('-id')
     permission_classes = [permissions.IsAuthenticated]
