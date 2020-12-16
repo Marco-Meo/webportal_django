@@ -325,6 +325,8 @@ Index.html erweitern
 
 ### 1. Setup
 
+[Rest Framework Link]('https://www.django-rest-framework.org/#')
+
 ```
 pip install djangorestframework
 pip install markdown       # Markdown support for the browsable API.
