@@ -320,3 +320,107 @@ Index.html erweitern
 </body>
 </html>
 ```
+
+## Django Rest Framework
+
+### 1. Setup
+
+```
+pip install djangorestframework
+pip install markdown       # Markdown support for the browsable API.
+pip install django-filter 
+```
+
+Installed Apps in webportal/settings.py
+```
+INSTALLED_APPS = [
+    ...
+    'rest_framework',
+]
+```
+
+```
+# Thirdparty configuration
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissions',
+        # 'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+}
+```
+
+Eintrag in webportal/urls.py
+
+```
+# API URLS
+urlpatterns += [
+    # API base url
+    path("api/", include("config.api_router")),
+    # DRF auth token
+    path("auth-token/", obtain_auth_token),
+]
+```
+
+### 2. API-Router erstellen
+Datei webportal/api_router.py erstellen:
+
+```
+from django.conf import settings
+from rest_framework.routers import DefaultRouter, SimpleRouter
+from faq.api.views import FaqViewSet
+
+if settings.DEBUG:
+    router = DefaultRouter()
+else:
+    router = SimpleRouter()
+
+router.register("faq", FaqViewSet)
+
+
+app_name = "api"
+urlpatterns = router.urls
+```
+
+### 3. Serializer und view erstellen
+
+Ordner "api" im App Ordner faq erstellen
+
+Datei serializer.py im Ordner api erstellen
+
+```
+from rest_framework import serializers
+from masterdata.models import Faq
+
+class FaqSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Faq
+        fields = "__all__"
+        extra_kwargs = {
+            "url": {"view_name": "api:faq-detail"}
+        }
+
+```
+
+Datei views.py im Ordner api erstellen:
+```
+from masterdata.models import Faq
+from rest_framework import viewsets
+from rest_framework import permissions
+
+from .serializers import FaqSerializer
+
+
+class FaqViewSet(viewsets.ModelViewSet):
+    serializer_class = FaqSerializer
+    queryset = Faq.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+```
