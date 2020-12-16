@@ -364,6 +364,8 @@ Eintrag in webportal/urls.py
 
 ```
 # API URLS
+from rest_framework.authtoken.views import obtain_auth_token
+
 urlpatterns += [
     # API base url
     path("api/", include("config.api_router")),
@@ -400,7 +402,7 @@ Datei serializer.py im Ordner api erstellen
 
 ```
 from rest_framework import serializers
-from masterdata.models import Faq
+from faq.models import Faq
 
 class FaqSerializer(serializers.ModelSerializer):
     class Meta:
@@ -414,7 +416,7 @@ class FaqSerializer(serializers.ModelSerializer):
 
 Datei views.py im Ordner api erstellen:
 ```
-from masterdata.models import Faq
+from faq.models import Faq
 from rest_framework import viewsets
 from rest_framework import permissions
 
