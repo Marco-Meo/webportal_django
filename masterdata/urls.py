@@ -5,4 +5,5 @@ app_name = 'masterdata'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('customer/', views.CustomerListView.as_view(), name="customer-list"),
 ]
